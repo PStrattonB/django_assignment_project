@@ -32,6 +32,7 @@ class InLineComment(admin.StackedInline):
         readonly_fields = ['name', 'text', 'email']
         return readonly_fields
 
+
 @admin.register(models.Topic)
 class TopicAdmin(admin.ModelAdmin):
     list_display = (

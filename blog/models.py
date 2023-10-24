@@ -1,6 +1,24 @@
+# blog/models.py
+
 from django.conf import settings  # Imports Django's loaded settings
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+
+
+class PostQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(status=self.model.PUBLISHED)
+
+    def draft(self):
+        return self.filter(status=self.model.DRAFT)
+
+    def get_authors(self):
+        user = get_user_model()
+        return user.objects.filter(blog_posts__in=self).distinct()
+
+    def get_topics(self):
+        return Topic.objects.all()
 
 
 class Topic(models.Model):
@@ -17,13 +35,7 @@ class Topic(models.Model):
     class Meta:
         ordering = ['name']
 
-
-class PostQuerySet(models.QuerySet):
-    def published(self):
-        return self.filter(status=self.model.PUBLISHED)
-
-    def draft(self):
-        return self.filter(status=self.model.DRAFT)
+    objects = PostQuerySet.as_manager()
 
 
 class Post(models.Model):
