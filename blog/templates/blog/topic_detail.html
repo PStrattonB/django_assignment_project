@@ -1,0 +1,14 @@
+<!-- blog/templates/blog/topic_detail.html -->
+
+{% extends "blog/base.html" %}
+
+{% block page_title %}{{ Fart }}{% endblock %}
+
+
+
+{% block main %}
+<h1>Published posts related to {{ topic.name }}</h1>
+{% for post in posts %}
+    {% include "blog/post_preview.html" %}
+{% endfor %}
+{% endblock %}

@@ -21,9 +21,10 @@
     <!-- Top navigation -->
   <nav id="top-nav">
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Posts</a></li>
+      <li><a href="{% url "home" %}">Home</a></li>
+      <li><a href="{% url "about" %}">About</a></li>
+      <li><a href="{% url "post-list" %}">Posts</a></li>
+      <li><a href="{% url "topic-list" %}">Topics</a></li>
       <li><a href="#">Contact</a></li>
     </ul>
   </nav>
@@ -48,8 +49,9 @@
         <h3>Popular Topics</h3>
         <ul>
           {% for topic in top_topics %}
-            <li>{{ topic.name }} ({{ topic.post_counter_annotated1 }} posts)</li>
+            <li><a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a> ({{ topic.post_counter_annotated1 }} posts)</li>
           {% endfor %}
+            <li><a href="{% url "topic-list" %}">View all topics</a></li>
         </ul>
       </section>
     </aside>
@@ -58,7 +60,8 @@
   <!-- The footer -->
   <footer id="site-footer">
     <!-- Print copyright with the current year -->
-    Copyright &copy;{% now 'Y' %}
+    Copyright &copy;{% now 'Y' %} -
+    <a href="{% url "terms_and_conditions" %}">Terms & Conditions</a>
   </footer>
 </body>
 </html>
