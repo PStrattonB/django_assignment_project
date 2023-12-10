@@ -1,11 +1,18 @@
 # tests/blog/views/test_home.py
 from model_bakery import baker
+from .views_model_bakery_custom_fields import rich_text_uploading_field
 import pytest
 
 from blog.models import Post
 
 # Needed for database
 pytestmark = pytest.mark.django_db
+
+
+def custom_fields():
+    return{
+        'content': rich_text_uploading_field(),
+    }
 
 
 def test_home(client):
@@ -27,7 +34,8 @@ def test_authors_included_in_context_data(client, django_user_model):
         'blog.Post',
         status=Post.PUBLISHED,
         author=cosmo,
-        _quantity=2
+        _quantity=2,
+        **custom_fields(),
     )
     # Make a published author called Elaine
     elaine = baker.make(
@@ -40,6 +48,7 @@ def test_authors_included_in_context_data(client, django_user_model):
         'blog.Post',
         status=Post.PUBLISHED,
         author=elaine,
+        **custom_fields(),
     )
 
     # Make an unpublished author
@@ -48,7 +57,7 @@ def test_authors_included_in_context_data(client, django_user_model):
         username='gcostanza'
     )
 
-    baker.make('blog.Post', author=unpublished_author, status=Post.DRAFT)
+    baker.make('blog.Post', author=unpublished_author, status=Post.DRAFT, **custom_fields())
 
     # Expected Cosmo and Elaine to be returned, in this order
     expected = [cosmo, elaine]

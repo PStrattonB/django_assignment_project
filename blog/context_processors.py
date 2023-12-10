@@ -1,10 +1,11 @@
-# blog/context_processors.py
+"""blog/context_processors.py"""
 
-from . import models
 from django.db.models import Count
+from . import models
 
 
-def base_context(request):
+def base_context(requests):
+    """Base context"""
     authors = models.Post.objects.published() \
         .get_authors() \
         .order_by('first_name')

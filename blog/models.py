@@ -1,28 +1,35 @@
-# blog/models.py
+""" blog/models.py"""
 
 from django.conf import settings  # Imports Django's loaded settings
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class PostQuerySet(models.QuerySet):
+    """Post Query Set"""
     def published(self):
+        """published"""
         return self.filter(status=self.model.PUBLISHED)
 
     def draft(self):
+        """Draft"""
         return self.filter(status=self.model.DRAFT)
 
     def get_authors(self):
+        """get authors function"""
         user = get_user_model()
         return user.objects.filter(blog_posts__in=self).distinct()
 
     def get_topics(self):
+        """get topics function"""
         return Topic.objects.all()
 
 
 class Topic(models.Model):
+    """Topic model"""
     name = models.CharField(
         max_length=50,
         unique=True  # To ensure no duplicates
@@ -34,11 +41,13 @@ class Topic(models.Model):
         return self.name
 
     class Meta:
+        """Meta"""
         ordering = ['name']
 
     objects = PostQuerySet.as_manager()
 
     def get_absolute_url(self):
+        """Get absolute url function"""
         kwargs = {'slug': self.slug}
         return reverse('topic-detail', kwargs=kwargs)
 
@@ -75,7 +84,7 @@ class Post(models.Model):
         null=False
     )
 
-    content = models.TextField()
+    content = RichTextUploadingField()
     created = models.DateTimeField(auto_now_add=True)  # Sets on creation
     updated = models.DateTimeField(auto_now=True)  # Updates on each save
 
@@ -96,6 +105,7 @@ class Post(models.Model):
     objects = PostQuerySet.as_manager()
 
     def get_absolute_url(self):
+        """get absolute url function for posts"""
         if self.published:
             kwargs = {
                 'year': self.published.year,
@@ -109,16 +119,23 @@ class Post(models.Model):
         return reverse('post-detail', kwargs=kwargs)
 
     class Meta:
-        # Sort by the `created` field. the `-` prefix specifies to order in desc/reverse order. Otherwise, it will be
-        # in ascending order.
+        """Sort by the `created` field. the `-` prefix specifies
+        to order in desc/reverse order.Otherwise, it will be in ascending order."""
         ordering = ['-created']
 
     def __str__(self):
         return self.title
 
     def publish(self):
+        """publish function for posts"""
         self.status = self.PUBLISHED
         self.published = timezone.now()
+
+    banner = models.ImageField(
+        blank=True,
+        null=True,
+        help_text='A banner image for the post'
+    )
 
 
 class Comment(models.Model):
@@ -154,4 +171,37 @@ class Comment(models.Model):
         return self.text
 
     class Meta:
+        """meta"""
         ordering = ['-created']
+
+
+class Contact(models.Model):
+    """Contacts model"""
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField()
+    message = models.TextField()
+    submitted = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        """meta"""
+        ordering = ['-submitted']
+
+    def __str__(self):
+        return f'{self.submitted.date()}: {self.email}'
+
+
+class PhotoContestSubmission(models.Model):
+    """Photo contest model"""
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField()
+    photo_contest_entry = models.ImageField()
+    submitted = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        """meta"""
+        ordering = ['-submitted']
+
+    def __str__(self):
+        return f'{self.submitted.date()}: {self.email}'

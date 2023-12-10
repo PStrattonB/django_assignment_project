@@ -1,0 +1,38 @@
+<!-- blog/templates/blog/photo_contest_form.html -->
+
+{% extends "blog/base.html" %}
+
+{% block page_title %}Photo Contest{% endblock %}
+
+
+{% block main %}
+<section>
+    <h1>Enter the photo contest!</h1>
+    <h4>Have a ball in the photo contest</h4>
+    <p>
+        My awesome blog is hosting a photo contest. Take a picture of anything and if I like it then you may or may not
+        win a prize of some kind or another. Prize is not guaranteed for winner. Winners will be contacted via
+        <b>email</b>. See requirements below.
+    </p>
+    <p>
+        This is additional text to make the contest seem more legit. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
+        standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make
+        a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+        Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
+    </p>
+    <h4>Requirements:</h4>
+    <ul>
+        <li>A first and last name</li>
+        <li>An email address</li>
+        <li>A photo file to be judged</li>
+    </ul>
+    <form action= "" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+          {{ form.as_table }}
+        </table>
+        <button type="submit">Submit</button>
+    </form>
+</section>
+{% endblock %}
